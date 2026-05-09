@@ -23,7 +23,11 @@ fn main() {
         .expect("failed to generate Genie bindings");
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let bindings_file = out_path.join("genie_bindings.rs");
+
+    println!("cargo:warning=Generating bindings at {:?}", bindings_file);
+
     bindings
-        .write_to_file(out_path.join("genie_bindings.rs"))
-        .unwrap();
+        .write_to_file(&bindings_file)
+        .expect("Couldn't write bindings!");
 }

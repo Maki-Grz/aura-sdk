@@ -1,6 +1,6 @@
 [package]
 name = "qnn-bindings-rs"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["GRZECZKA MAXIMILIEN"]
 description = "Rust bindings and CLI runner for Qualcomm Genie/QNN on Snapdragon X Plus 8 Cores."
@@ -10,6 +10,8 @@ keywords = ["snapdragon", "qnn", "genie", "llm", "npu"]
 categories = ["api-bindings", "command-line-utilities"]
 
 [dependencies]
+anyhow = "1.0"
+clap = { version = "4.4", features = ["derive"] }
 
 [build-dependencies]
 bindgen = "0.69"
