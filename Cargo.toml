@@ -1,20 +1,32 @@
 [package]
-name = "qnn-bindings-rs"
+name = "aura-sdk"
 version = "0.2.0"
 edition = "2021"
 authors = ["GRZECZKA MAXIMILIEN"]
-description = "Rust bindings and CLI runner for Qualcomm Genie/QNN on Snapdragon X Plus 8 Cores."
+description = "Aura SDK: Universal NPU-accelerated AI engine for Snapdragon platforms."
 license = "MIT"
+repository = "https://github.com/Maki-Grz/aura-sdk"
 readme = "README.md"
-keywords = ["snapdragon", "qnn", "genie", "llm", "npu"]
-categories = ["api-bindings", "command-line-utilities"]
+keywords = ["aura", "snapdragon", "qnn", "npu"]
+categories = ["api-bindings", "science", "multimedia"]
 
 [dependencies]
-anyhow = "1.0"
 clap = { version = "4.4", features = ["derive"] }
+ort = { version = "2.0.0-rc.12", features = ["qnn", "ndarray"], optional = true }
+ndarray = { version = "0.17", optional = true }
+tokenizers = { version = "0.23.1", optional = true }
+anyhow = "1.0.102"
 
 [build-dependencies]
-bindgen = "0.69"
+bindgen = "0.72.1"
+
+[features]
+default = []
+aura-engine = ["dep:ort", "dep:ndarray", "dep:tokenizers"]
 
 [profile.release]
 opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

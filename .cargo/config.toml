@@ -1,0 +1,8 @@
+[env]
+QNN_SDK_ROOT = { value = "C:\\Qualcomm\\AIStack\\QAIRT\\2.45.40.260406", force = true }
+ADSP_LIBRARY_PATH = { value = "C:\\Qualcomm\\AIStack\\QAIRT\\2.45.40.260406\\lib\\hexagon-v73\\unsigned", force = true }
+CXXFLAGS = { value = "/EHsc", force = true }
+
+[target.aarch64-pc-windows-msvc]
+rustflags = ["-C", "link-arg=/FORCE:MULTIPLE"]
+linker = "rust-lld"

@@ -1,5 +1,6 @@
 use std::env;
-use std::path::PathBuf;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 fn main() {
     let qnn_base = env::var("QNN_SDK_ROOT")
@@ -7,11 +8,34 @@ fn main() {
 
     println!("cargo:rerun-if-changed=wrapper.h");
     println!("cargo:rerun-if-env-changed=QNN_SDK_ROOT");
-    println!(
-        "cargo:rustc-link-search={}/lib/aarch64-windows-msvc",
-        qnn_base
-    );
+
+    let lib_dir = format!("{}/lib/aarch64-windows-msvc", qnn_base);
+    println!("cargo:rustc-link-search={}", lib_dir);
     println!("cargo:rustc-link-lib=Genie");
+
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let target_dir = Path::new(&out_dir)
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap()
+        .parent()
+        .unwrap();
+
+    let dlls = [
+        "Genie.dll",
+        "QnnHtp.dll",
+        "QnnSystem.dll",
+        "QnnHtpNetRunExtensions.dll",
+        "QnnHtpPrepare.dll",
+    ];
+    for dll in &dlls {
+        let src = Path::new(&lib_dir).join(dll);
+        let dest = target_dir.join(dll);
+        if src.exists() {
+            let _ = fs::copy(&src, &dest);
+        }
+    }
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
@@ -22,11 +46,7 @@ fn main() {
         .generate()
         .expect("failed to generate Genie bindings");
 
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    let bindings_file = out_path.join("genie_bindings.rs");
-
-    println!("cargo:warning=Generating bindings at {:?}", bindings_file);
-
+    let bindings_file = PathBuf::from(out_dir).join("genie_bindings.rs");
     bindings
         .write_to_file(&bindings_file)
         .expect("Couldn't write bindings!");
